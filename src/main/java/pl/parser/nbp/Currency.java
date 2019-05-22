@@ -1,27 +1,21 @@
 package pl.parser.nbp;
 
-import java.io.IOException;
+
 import static java.lang.Math.sqrt;
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 /**
  *
- * @author Bartosz
+ * @author Bartosz Przybylowski
  */
+
 public class Currency  {
     private float buyingRate;
     private float sellingRate;
@@ -30,22 +24,24 @@ public class Currency  {
     private LocalDate endDate;
     
 
-    
+    //constructor
     public Currency(CurrencyType currencyType, LocalDate startDate, LocalDate endDate){
         this.currencyType = currencyType;
         setStartDate(startDate);
         setEndDate(endDate);
+        System.out.println(currencyType);
         calcAvBuyingRate(currencyType,startDate,endDate);
         calcDevSellingRate(currencyType,startDate,endDate);
     }
-    
+    //setters
     public void setStartDate(LocalDate date){
         this.startDate = date;
     }
     public void setEndDate(LocalDate date){
         this.endDate = date;
     }
-    
+
+    //getters
     public LocalDate getStertDate(){
         return startDate;
     }
@@ -58,7 +54,9 @@ public class Currency  {
     public float getValue(){
         return buyingRate;
     }
-    
+
+
+    //calculating average buying rate
     public float calcAvBuyingRate(CurrencyType currencyType, LocalDate start, LocalDate end){
         float avBuyingRate = 0;
 
@@ -70,17 +68,17 @@ public class Currency  {
            values.add(this.buyingRate);
            start = start.plusDays(1);
         }
-        
-        //System.out.println(values.toString());
 
-
-        for (int i = 0; i < values.size();i++) {
-            avBuyingRate += values.get(i); 
+        float sum = 0;
+        for (Float v: values) {
+            sum += v;
         }
-        System.out.format("%.4f%n", avBuyingRate/values.size());
-        return(avBuyingRate/values.size());
+        avBuyingRate = sum/values.size();
+
+        System.out.format("%.4f%n", avBuyingRate);
+        return(avBuyingRate);
     }
-    
+    //calculating deviation of selling rate
     public float calcDevSellingRate(CurrencyType currencyType, LocalDate start, LocalDate end){
         float devSellingRate = 0;
         ArrayList<Float> values = new ArrayList<>();
@@ -93,16 +91,16 @@ public class Currency  {
             }
 
         //System.out.println(values.toString());
-        float avSellingRate = 0;
-        for (int i = 0; i < values.size();i++) {
-            avSellingRate += values.get(i);
+        float sum = 0;
+        for (Float v: values) {
+            sum += v;
         }
-        avSellingRate = avSellingRate/values.size();
+        float avSellingRate = sum/values.size();
         //System.out.println(avSellingRate);
 
         float variance = 0;
-        for (int i = 0; i < values.size();i++){
-            variance += (values.get(i) - avSellingRate)*(values.get(i) - avSellingRate);
+        for (Float v: values){
+            variance += (v - avSellingRate)*(v - avSellingRate);
         }
         variance = variance/values.size();
         devSellingRate = (float) sqrt(variance);
@@ -110,7 +108,7 @@ public class Currency  {
         return devSellingRate;
     }
     
-    // Function to setting Values of buyingRate and sellingRate
+    // Method to setting values of buyingRate and sellingRate
     // getting link by date 
     public ArrayList setValues( LocalDate date) {
         
@@ -147,7 +145,8 @@ public class Currency  {
                     if(qName.equalsIgnoreCase("/pozycja")){
                     }
                 }
-                
+
+
                 public void characters( char[] ch, int start, int length) {
                    if(bCurrencyType){
                         //System.out.println("Waluta: " + new String(ch, start, length));
@@ -170,6 +169,8 @@ public class Currency  {
                 e.printStackTrace();
             }
 
+        // searching currency type, buying and selling rate by first two result
+        // after finding currencyType
         for(int i = 0; i< results.size();i++){
             if(results.get(i).equals(this.currencyType.toString())){
                 //System.out.println(results.get(i));
@@ -177,8 +178,6 @@ public class Currency  {
                 this.buyingRate = Float.valueOf(replace);
                 String replace2 = results.get(i+2).replace(',', '.');
                 this.sellingRate = Float.valueOf(replace2);
-                //System.out.println(buyingRate +" & "+ sellingRate);
-                
             }
         }
         //System.out.println(this.buyingRate + " & " +this.sellingRate);

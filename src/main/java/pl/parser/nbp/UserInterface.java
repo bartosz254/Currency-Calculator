@@ -1,10 +1,7 @@
 package pl.parser.nbp;
 
 import java.time.format.DateTimeFormatter;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.lang.String;
 
 public class UserInterface {

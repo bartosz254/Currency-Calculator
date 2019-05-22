@@ -5,11 +5,6 @@ package pl.parser.nbp;
  */
 
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Scanner;
-import javax.xml.parsers.ParserConfigurationException;
-
 
 public class MainClass {
 
